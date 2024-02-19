@@ -9,6 +9,7 @@ use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\models\User;
 
 /**
  * ReportController implements the CRUD actions for Report model.
@@ -34,19 +35,29 @@ class ReportController extends Controller
     }
 
     /**
+     * @return User
+     */
+    public function getUser() {
+        return Yii::$app->user->identity;
+    }
+
+    /**
      * Lists all Report models.
      *
-     * @return string
+     * @return string|\yii\web\Response
      */
     public function actionIndex()
     {
         $searchModel = new ReportSearch();
-        if (Yii::$app->user->identity->role_id == 2) {
-            $dataProvider = $searchModel->search($this->request->queryParams, Yii::$app->user->identity->id);
+        $user = self::getUser();
+        if (!$user) {
+            return $this->goHome();
         }
-        else {
-            $dataProvider = $searchModel->search($this->request->queryParams);
+        $userIds = null;
+        if (!$user->isAdmin()) {
+            $userIds = $user->id;
         }
+        $dataProvider = $searchModel->search($this->request->queryParams, $userIds);
       
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -106,7 +117,7 @@ class ReportController extends Controller
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect('index');
         }
 
         return $this->render('update', [

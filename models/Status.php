@@ -17,6 +17,12 @@ class Status extends \yii\db\ActiveRecord
     const NEW_STATUS = 1;
     const APPROVED_STATUS = 2;
     const DECLINED_STATUS = 3;
+ 
+    public function __toString() {
+        return $this->status;
+    }
+ 
+
     /**
      * {@inheritdoc}
      */

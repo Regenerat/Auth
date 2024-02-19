@@ -129,6 +129,10 @@ class SiteController extends Controller
     }
 
     public function actionRegister() {
+        if(!Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+        
         $model = new User();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $model->role_id = Role::USER_ROLE_ID;

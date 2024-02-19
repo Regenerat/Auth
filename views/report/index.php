@@ -38,17 +38,17 @@ $this->params['breadcrumbs'][] = $this->title;
             'number',
             'description:ntext',
             'user',
-            'status_id',
+            'status',
             [
                 'attribute'=> 'status',
                 //смена статуса вмдна только админу
                 'visible' => (Yii::$app->user->identity->role_id == '1')?true:false,
                 'format'=> 'raw',
-                'value'=> function ($data) { 
-                    $html = html::beginForm(Url::to(['update', 'id' => $data->id]));
-                    $html .= html::activeDropDownList($data, 'status_id', [
-                        2 => 'Confirmed',
-                        3=> 'Deslined',
+                'value'=> function ($data) {
+                    $html = Html::beginForm(Url::to(['update', 'id' => $data->id]));
+                    $html .= Html::activeDropDownList($data, 'status_id', [
+                        2 => 'Подтверждено',
+                        3 => 'Отклонено',
                     ],
                     [
                         'prompt' => [
@@ -59,7 +59,8 @@ $this->params['breadcrumbs'][] = $this->title;
                             ]
                         ]
                     ]);
-                    $html .= html::endForm();
+                    $html .= Html::submitButton('Принять', ['class' => 'btn btn-link']);
+                    $html .= Html::endForm();
                     return $html;
                 }
             ],
